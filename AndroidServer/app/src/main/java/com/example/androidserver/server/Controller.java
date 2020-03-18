@@ -11,7 +11,7 @@ public class Controller {
 
     public void connect(MainActivity context) throws IOException {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-        server.createContext("/test", new MyHttpHandler(context));
+        server.createContext("/mobile", new MyHttpHandler(context));
         server.setExecutor(null); // creates a default executor
         server.start();
     }

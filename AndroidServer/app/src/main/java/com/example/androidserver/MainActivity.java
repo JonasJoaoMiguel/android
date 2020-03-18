@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -12,6 +13,7 @@ import androidx.core.content.ContextCompat;
 
 import com.example.androidserver.server.Controller;
 import com.example.androidserver.task.TerminalPaymentTask;
+import com.example.androidserver.websocket.ToUpperWebsocket;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import br.com.uol.pagseguro.plugpag.PlugPag;
 import br.com.uol.pagseguro.plugpag.PlugPagPaymentData;
 import br.com.uol.pagseguro.plugpag.PlugPagVoidData;
 
-public class MainActivity extends AppCompatActivity implements TaskHandler {
+public class MainActivity extends AppCompatActivity implements TaskHandler , View.OnClickListener{
 
     private static final int PERMISSIONS_REQUEST_CODE = 0x1234;
 
@@ -30,14 +32,21 @@ public class MainActivity extends AppCompatActivity implements TaskHandler {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        this.requestPermissions();
+
+//        Controller controller = new Controller();
+
+//        try {
+//            controller.connect(this);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+    }
+
+    @Override
+    public void onClick(View v) {
         PlugPagManager.create(this.getApplicationContext());
-        Controller controller = new Controller();
-        try {
-            controller.connect(this);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        this.requestPermissions();
+        new ToUpperWebsocket(6060 , this).start();
     }
 
     private void requestPermissions() {
@@ -141,5 +150,6 @@ public class MainActivity extends AppCompatActivity implements TaskHandler {
     public void onTaskFinished(Object result) {
 
     }
+
 
 }

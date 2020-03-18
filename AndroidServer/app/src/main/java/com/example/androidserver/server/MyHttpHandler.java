@@ -1,5 +1,8 @@
 package com.example.androidserver.server;
 
+import android.os.Build;
+import android.util.Log;
+
 import com.example.androidserver.MainActivity;
 import com.example.androidserver.mapper.PlugPaymentMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -13,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 
 import br.com.uol.pagseguro.plugpag.PlugPagPaymentData;
@@ -29,12 +33,16 @@ public class MyHttpHandler implements HttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
 
         if(httpExchange.getRequestMethod().equals("GET")) {
-            byte[] response = "Welcome Real's HowTo test page".getBytes();
+
+            String hostname = getHostname();
+            byte[] response = hostname.getBytes();
             httpExchange.sendResponseHeaders(200, response.length);
             OutputStream os = httpExchange.getResponseBody();
             os.write(response);
             os.close();
-        }else if (httpExchange.getRequestMethod().equals("POST")) {
+
+
+        } else if (httpExchange.getRequestMethod().equals("POST")) {
 
             InputStream is = httpExchange.getRequestBody();
 
@@ -55,6 +63,18 @@ public class MyHttpHandler implements HttpHandler {
             os.close();
         }
 
+    }
+
+    private String getHostname() {
+        try {
+            Method getString = Build.class.getDeclaredMethod("getString", String.class);
+            getString.setAccessible(true);
+            Log.d("teste", "oou: " + getString.invoke(null, "net.hostname").toString());
+            return getString.invoke(null, "net.hostname").toString();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     private void executePost(PlugPagPaymentData plugData) {
